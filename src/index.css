@@ -90,25 +90,12 @@ footer a {
     border-radius: 50%;
     width: 20px;
     height: 20px;
-    animation: spin 0.5s linear infinite;
-    animation: 0.5s fadeIn;
-    animation-fill-mode: forwards;
-
-    visibility: hidden;
+    animation: spin 2s linear infinite;
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  99% {
-    visibility: hidden;
-  }
-  100% {
-    visibility: visible;
-  }
 }
 
 .result {
