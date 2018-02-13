@@ -15,13 +15,13 @@ export class Directions extends React.Component {
   }
 }
 
-export const FlashCard = ({ item, handleAnswer }) => (
+export const FlashCard = ({ item, handleAnswer}) => (
   <main>
     <Directions text="Have the student read the text in the card, helping them if needed. Then mark whether they needed help." />
     <section className="item">
-      <h2>{item.split('\\n').map(function(item) {
+      <h2>{item.split('\\n').map(function(item, i) {
         return (
-          <span>
+          <span key={i}>
             {item}
             <div className="space" />
             <br/>
@@ -58,5 +58,5 @@ export const Header = ({ text }) => (
 );
 
 export const Loading = () => (
-  <div class="loader"></div>
+  <div className="loader"></div>
 );

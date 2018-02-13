@@ -4,10 +4,10 @@ import { withRouter } from 'react-router-dom'
 import gql from 'graphql-tag'
 import {
   Header,
-  Directions,
   FlashCard,
   LearnNew,
   Loading,
+  Directions
 } from './Common';
 import {
   LETTERS,
@@ -15,6 +15,7 @@ import {
   WORDS,
   WORDS_PRACTICE,
   STORY,
+  COMPREHENSION,
   PICTURE,
   RETRY,
 } from './Constants';
@@ -105,6 +106,12 @@ class Lesson extends React.Component {
       }
     } else if (stage === STORY){
       if (isCorrect) {
+        this.setState({ stage: COMPREHENSION });
+      } else {
+        this.setState({ stage: RETRY });
+      }
+    } else if (stage === COMPREHENSION) {
+      if (isCorrect) {
         this.setState({ stage: PICTURE });
       } else {
         this.setState({ stage: RETRY });
@@ -124,6 +131,8 @@ class Lesson extends React.Component {
         return <Header text="Practicing New Words" />;
       case STORY:
         return <Header text="Reading the Story" />;
+      case COMPREHENSION:
+        return <Header text="Comprehending the Story" />;
       case PICTURE:
         return <Header text="Lesson Completed" />;
       case RETRY:
@@ -145,6 +154,8 @@ class Lesson extends React.Component {
         return this.renderWordPractice();
       case STORY:
         return this.renderStory(Lesson.story);
+      case COMPREHENSION:
+        return this.renderComprehension(Lesson, this.handleAnswer);
       case PICTURE:
         return this.renderPicture(Lesson);
       case RETRY:
@@ -156,6 +167,10 @@ class Lesson extends React.Component {
 
   renderLetter() {
     const { letters, index } = this.state;
+    if (!letters[index]) {
+      console.log(letters)
+      return <p>Error, {index}, {letters.map(l => <p>{l}</p>)}</p>;
+    }
     return (
       <LearnNew
         item={letters[index].letter}
@@ -193,6 +208,29 @@ class Lesson extends React.Component {
         handleAnswer={this.handleAnswer}
       />);
   }
+  renderComprehension(lesson, handleAnswer) {
+    const text = lesson.comprehension || "1. What happened in the lesson? \\n 2. What do you expect to see in the picture?";
+    return (
+      <main>
+        <Directions text="Ask the student the questions below, and mark whether the student was able to answer the questions sensibly." />
+        <section className="item">
+          <h2>{text.split('\\n').map(function(item, i) {
+            return (
+              <span key={i}>
+                {item}
+                <div className="space" />
+                <br/>
+              </span>
+            )
+          })}</h2>
+        </section>
+        <section>
+          <button className="correct" onClick={() => handleAnswer(true)}>Answered Logically</button>
+          <button className="incorrect" onClick={() => handleAnswer(false)}>Struggled to Answer</button>
+        </section>
+      </main>
+    );
+  }
   renderPicture(lesson) {
     return (
       <div className="result">
@@ -221,6 +259,7 @@ const LESSON_QUERY = gql`
        imageUrl,
        words,
        story,
+       comprehension,
        letters {
          example,
          letter
