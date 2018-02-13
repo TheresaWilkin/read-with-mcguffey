@@ -1,0 +1,3 @@
+targets:
+  read-with-mcguffey: shared-ap-northeast-1/cjdky6rwh44gr0117eobpl14i
+  default: read-with-mcguffey
