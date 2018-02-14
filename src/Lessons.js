@@ -17,14 +17,15 @@ class Lessons extends React.Component {
         <Header text={allLessons ? allLessons[0].reader.title : 'Reader'} />
         <Directions text="Begin by attempting the first lesson. If the student is unable to complete the first lesson, the student is not prepared for this reader." />
         { this.props.allLessonsQuery.loading ? <Loading /> : (<ul>
-          {allLessons.map(lesson => (
+          {allLessons && allLessons.map(lesson => (
             <li key={lesson.id}>
               <a href={`/lesson/${lesson.id}`}>
-                Lesson {lesson.number} {this.isReligious(lesson)}
+                Lesson {lesson.number} {this.isReligious(lesson)} {lesson.review && '-- Review'}
               </a>
             </li>
           ))}
         </ul>)}
+        <a href={`/${this.props.match.params.reader}/new`}>You can help this project by adding new lessons to the {allLessons ? allLessons[0].reader.title : 'Reader'}.</a>
       </div>
     )
   }
@@ -38,6 +39,7 @@ const LESSON_QUERY = gql`
     number,
     religious,
     id,
+    review,
     reader {
       title
     }

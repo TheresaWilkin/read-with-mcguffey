@@ -31,6 +31,7 @@ class Lesson extends React.Component {
       letters: [],
       stage: LETTERS,
       index: 0,
+      error: ''
     };
     this.handleContinue = this.handleContinue.bind(this);
     this.handleAnswer = this.handleAnswer.bind(this);
@@ -38,6 +39,10 @@ class Lesson extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (lessonChanged(this.props, nextProps)) {
+      if (nextProps.lessonQuery.Lesson == null) {
+        this.setState({ error: 'Lesson not found.' });
+        return;
+      }
       let stage = LETTERS;
       if (!nextProps.lessonQuery.Lesson.letters.length) {
         stage = WORDS;
@@ -59,6 +64,14 @@ class Lesson extends React.Component {
     }
 
     const { Lesson } = this.props.lessonQuery;
+    if (!Lesson) {
+      return (
+        <div>
+          <p>Error! {this.state.error}</p>
+          <a href="/">Return to home?</a>
+        </div>
+      );
+    }
     return (
       <div>
         {this.renderHeader()}
