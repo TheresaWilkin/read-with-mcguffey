@@ -60,3 +60,43 @@ export const Header = ({ text }) => (
 export const Loading = () => (
   <div className="loader"></div>
 );
+
+export function romanNumeralize(number) {
+  let romanNumeral = '';
+  let remainder = number;
+  const hundreds = Math.floor(remainder / 100);
+  remainder %= 100;
+  for (let i = 0; i < hundreds; i++) {
+    romanNumeral += 'C';
+  }
+  let tens = Math.floor(remainder / 10);
+  remainder %= 10;
+  if (tens === 9) {
+    romanNumeral += 'XC';
+  } else if (tens === 4) {
+    romanNumeral += 'XL';
+  } else {
+    if (tens >= 5) {
+      romanNumeral += 'L';
+      tens -= 5;
+    }
+    for (let i = 0; i < tens; i++) {
+      romanNumeral += 'X';
+    }
+  }
+  let ones = Math.floor(remainder / 1);
+  if (ones === 9) {
+    romanNumeral += 'IX';
+  } else if (ones === 4){
+    romanNumeral += 'IV';
+  } else {
+    if (ones >= 5) {
+      romanNumeral += 'V';
+      ones -= 5;
+    }
+    for (let i = 0; i < ones; i++) {
+      romanNumeral += 'I';
+    }
+  }
+  return romanNumeral;
+}

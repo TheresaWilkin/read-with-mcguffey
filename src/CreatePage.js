@@ -49,6 +49,7 @@ class CreatePage extends React.Component {
   }
 
   render() {
+    console.log(this.props, this.state)
     return (
         <section>
           <Header text="Add a New Lesson" />

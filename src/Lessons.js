@@ -2,7 +2,7 @@ import React from 'react'
 import { graphql, compose } from 'react-apollo'
 import { withRouter} from 'react-router-dom'
 import gql from 'graphql-tag'
-import { Header, Loading, Directions } from './Common';
+import { Header, Loading, Directions, romanNumeralize } from './Common';
 
 class Lessons extends React.Component {
   isReligious({ religious }) {
@@ -37,7 +37,7 @@ class Lessons extends React.Component {
           {allLessons && allLessons.map(lesson => (
             <li key={lesson.id}>
               <a href={`/lesson/${lesson.id}`}>
-                Lesson {lesson.number} {this.isReligious(lesson)} {lesson.review && '-- Review'}
+                Lesson {romanNumeralize(lesson.number)} {this.isReligious(lesson)} {lesson.review && '-- Review'}
               </a>
             </li>
           ))}
