@@ -15,6 +15,10 @@ class CreatePage extends React.Component {
     religious: false,
   }
 
+  formatWords(text) {
+    return text.split(',').map(word => word.trim()).filter(word => !!word);
+  }
+
   render() {
     return (
         <section>
@@ -43,9 +47,9 @@ class CreatePage extends React.Component {
             />
             <input
               type="text"
-              value={this.state.words.join(',')}
+              value={this.state.words.join(', ')}
               placeholder='Word list (comma-separated)'
-              onChange={e => this.setState({words: e.target.value.split(',')})}
+              onChange={e => this.setState({words: this.formatWords(e.target.value)})}
             />
             <textarea
               value={this.state.story}
@@ -55,7 +59,7 @@ class CreatePage extends React.Component {
             />
             <textarea
               value={this.state.comprehension}
-              placeholder='Comprehension questions.'
+              placeholder='Comprehension questions (optional).'
               onChange={e => this.setState({comprehension: e.target.value})}
             />
               <label>
@@ -94,7 +98,7 @@ class CreatePage extends React.Component {
   handlePost = async () => {
     const {number, imageUrl, comprehension, words, story, review, religious} = this.state
     const { reader } = this.props.match.params;
-    await this.props.createLessonMutation({variables: {number: parseInt(number), imageUrl, words, story: story.replace(/\n/g, '\\n'), comprehension: comprehension.replace(/\n/g, '\\n'), review, religious, reader}})
+    await this.props.createLessonMutation({variables: {number: parseInt(number,10), imageUrl, words, story: story.replace(/\n/g, '\\n'), comprehension: comprehension.replace(/\n/g, '\\n'), review, religious, reader}})
     this.props.history.replace('/')
   }
 
