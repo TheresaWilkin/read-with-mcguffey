@@ -1,7 +1,10 @@
+* {
+  font-family: 'Montserrat', sans-serif;
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Montserrat', sans-serif;
   text-align: center;
   white-space: pre-line;
 }
@@ -102,7 +105,7 @@ footer a {
   padding-bottom: 20px;
 }
 
-input[type=text], select, textarea, input[type=number] {
+input[type=text], select, textarea, input[type=number], .dropzone {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -110,4 +113,33 @@ input[type=text], select, textarea, input[type=number] {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.dropzone p, input::placeholder, textarea, select {
+  text-align: left;
+  font-size: 12px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.dropzone p, input::placeholder {
+  color: #999;
+}
+
+.dropzone {
+  background-color: rgb(245,245,245);
+  border: 1px dashed #ccc;
+}
+
+.help {
+  font-size: 12px;
+}
+
+.help span {
+  display: inline-block;
+  border: 1px solid #aaa;
+  border-radius: 100%;
+  width: 12px;
+  padding: 2px;
+  margin-right: 5px;
+  color: #aaa;
 }

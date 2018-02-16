@@ -2,7 +2,10 @@ import React from 'react'
 import { withRouter } from 'react-router-dom'
 import { graphql} from 'react-apollo'
 import gql from 'graphql-tag'
+import Dropzone from 'react-dropzone';
+import request from 'superagent';
 import { Header, Directions } from './Common';
+
 class CreatePage extends React.Component {
 
   state = {
@@ -13,6 +16,32 @@ class CreatePage extends React.Component {
     comprehension: '',
     review: false,
     religious: false,
+  }
+
+  onImageDrop(files) {
+    this.setState({
+      uploadedFile: files[0]
+    });
+
+    this.handleImageUpload(files[0]);
+  }
+
+  handleImageUpload(file) {
+    let upload = request.post(process.env.REACT_APP_CLOUDINARY_URL)
+                        .field('upload_preset', process.env.REACT_APP_CLOUDINARY_PRESET)
+                        .field('file', file);
+
+    upload.end((err, response) => {
+      if (err) {
+        console.error(err);
+      }
+
+      if (response.body.secure_url !== '') {
+        this.setState({
+          imageUrl: response.body.secure_url
+        });
+      }
+    });
   }
 
   formatWords(text) {
@@ -26,40 +55,42 @@ class CreatePage extends React.Component {
           <Directions text="Fill in the information below to add a new lesson to the reader from which you have just navigated. You can find a link to the full Eclectic Readers below. The submit button will appear when you have added all required information." />
           <a href="https://www.gutenberg.org/ebooks/author/5671">Link to McGuffey's Eclectic Readers</a>
           <div style={{maxWidth: 400, margin: '0 auto'}} className=''>
-            {this.state.imageUrl &&
-              <img
-                src={this.state.imageUrl}
-                alt=''
-              />}
               <input
                 value={this.state.number}
-                placeholder='Lesson Number (ie, the first lesson in the reader is "1")'
+                placeholder='Lesson number (ie, the first lesson in the reader is "1")'
                 type="number"
                 onChange={e => this.setState({number: e.target.value})}
                 required
               />
+              {this.state.imageUrl &&
+                <img
+                  src={this.state.imageUrl}
+                  alt=''
+                />}
+              <Dropzone
+                multiple={false}
+                accept="image/*"
+                className="dropzone"
+                onDrop={this.onImageDrop.bind(this)}>
+                <p>Lesson illustration (take a screenshot of the illustration, then drop an image or click to select a file to upload; image will appear above when saved)</p>
+              </Dropzone>
+              <a className="help" href="https://support.apple.com/en-us/HT201361"> <span>?</span>How do I take a screenshot on a Mac?</a> <br />
+              <a className="help" href="https://support.microsoft.com/en-us/help/13776/windows-use-snipping-tool-to-capture-screenshots"> <span>?</span>How do I take a screenshot on a PC?</a>
             <input
               type="text"
-              value={this.state.imageUrl}
-              placeholder='Image Url (upload the image to Cloudinary or a similar hosting site)'
-              onChange={e => this.setState({imageUrl: e.target.value})}
-              required
-            />
-            <input
-              type="text"
-              value={this.state.words.join(', ')}
+              value={this.state.words}
               placeholder='Word list (comma-separated)'
-              onChange={e => this.setState({words: this.formatWords(e.target.value)})}
+              onChange={e => this.setState({words: e.target.value})}
             />
             <textarea
               value={this.state.story}
-              placeholder='Lesson Text/Story.'
+              placeholder='Lesson text/story'
               onChange={e => this.setState({story: e.target.value})}
               required
             />
             <textarea
               value={this.state.comprehension}
-              placeholder='Comprehension questions (optional).'
+              placeholder='Comprehension questions (optional)'
               onChange={e => this.setState({comprehension: e.target.value})}
             />
               <label>
@@ -98,7 +129,7 @@ class CreatePage extends React.Component {
   handlePost = async () => {
     const {number, imageUrl, comprehension, words, story, review, religious} = this.state
     const { reader } = this.props.match.params;
-    await this.props.createLessonMutation({variables: {number: parseInt(number,10), imageUrl, words, story: story.replace(/\n/g, '\\n'), comprehension: comprehension.replace(/\n/g, '\\n'), review, religious, reader}})
+    await this.props.createLessonMutation({variables: {number: parseInt(number,10), imageUrl, words: this.formatWords(words), story: story.replace(/\n/g, '\\n'), comprehension: comprehension.replace(/\n/g, '\\n'), review, religious, reader}})
     this.props.history.replace('/')
   }
 
