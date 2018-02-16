@@ -9,12 +9,29 @@ class Lessons extends React.Component {
     return religious ? '(Religious)' : '';
   }
 
+  needsMoreLessons(allLessons = { length: 0 }, reader) {
+    if (allLessons.length === 0) {
+      return true;
+    }
+    return reader.lessonCount > allLessons.length;
+  }
+
+  noLessonsFound(query, allLessons) {
+    return (!query.loading && (!allLessons || !allLessons.length));
+  }
+
   render() {
     const { allLessons } = this.props.allLessonsQuery;
-
+    let reader = {
+      title: 'Reader',
+      lessonCount: 0,
+    };
+    if (allLessons && allLessons.length) {
+      reader = allLessons[0].reader;
+    }
     return (
       <div>
-        <Header text={allLessons ? allLessons[0].reader.title : 'Reader'} />
+        <Header text={reader.title} />
         <Directions text="Begin by attempting the first lesson. If the student is unable to complete the first lesson, the student is not prepared for this reader." />
         { this.props.allLessonsQuery.loading ? <Loading /> : (<ul>
           {allLessons && allLessons.map(lesson => (
@@ -25,7 +42,8 @@ class Lessons extends React.Component {
             </li>
           ))}
         </ul>)}
-        <a href={`/${this.props.match.params.reader}/new`}>You can help this project by adding new lessons to the {allLessons ? allLessons[0].reader.title : 'Reader'}.</a>
+        {this.noLessonsFound(this.props.allLessonsQuery, allLessons) && <p>No lessons found.</p>}
+        {this.needsMoreLessons(allLessons, reader) && <a href={`/${this.props.match.params.reader}/new`}>You can help this project by adding new lessons to the {reader.title}.</a>}
       </div>
     )
   }
@@ -41,7 +59,8 @@ const LESSON_QUERY = gql`
     id,
     review,
     reader {
-      title
+      title,
+      lessonCount
     }
   }
   }
